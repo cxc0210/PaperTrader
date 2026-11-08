@@ -1,3 +1,10 @@
 spring:
   application:
     name: PaperTrader
+  datasource:
+    url: jdbc:postgresql://localhost:5432/paper_trader
+    username: postgres
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: none

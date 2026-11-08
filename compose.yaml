@@ -1,0 +1,14 @@
+# 本地开发基础设施（仅 PostgreSQL，后续再加 Redis 等）
+# 启动：docker compose up -d
+services:
+  postgres:
+    image: postgres:17
+    container_name: local-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: paper_trader
+    ports:
+      - "5432:5432"
+    volumes:
+      - /Users/andrechen/Desktop/Andre/playground/postgres-data:/var/lib/postgresql/data
