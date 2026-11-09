@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
-@PreAuthorize("isAuthenticated()")
 public class UserController {
 
     private final UserService userService;
@@ -42,34 +41,33 @@ public class UserController {
     }
 
     @PostMapping("/list")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<UserPageRes> list(@RequestBody(required = false) UserListReq req) {
         return Result.ok(userService.list(req));
     }
 
     @PostMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<UserRes> get(@PathVariable Long id) {
         return Result.ok(userService.get(id));
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<UserRes> create(@RequestBody CreateUserReq req) {
         return Result.ok(userService.create(req));
     }
 
     @PostMapping("/{id}/update")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<UserRes> update(@PathVariable Long id, @RequestBody UpdateUserReq req) {
         return Result.ok(userService.update(id, req));
     }
 
     @PostMapping("/{id}/delete")
+    @PreAuthorize("hasRole('ADMIN')")
     public Result<Void> delete(@PathVariable Long id) {
         userService.delete(id);
-        return Result.ok();
-    }
-
-    @PostMapping("/{id}/password")
-    public Result<Void> changePassword(@PathVariable Long id, @RequestBody ChangePasswordReq req) {
-        userService.changePassword(id, req);
         return Result.ok();
     }
 }

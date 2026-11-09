@@ -5,6 +5,7 @@ import com.andre.papertrader.dto.LoginReq;
 import com.andre.papertrader.dto.LoginRes;
 import com.andre.papertrader.dto.UserRes;
 import com.andre.papertrader.entity.User;
+import com.andre.papertrader.entity.UserRole;
 import com.andre.papertrader.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
@@ -81,7 +82,7 @@ public class AuthService {
         }
     }
 
-    public Long authenticate(String token) {
+    public AuthenticatedUser authenticate(String token) {
         try {
             JwtService.TokenClaims claims = jwtService.parse(token);
             boolean active = redisService.refreshSession(
@@ -93,10 +94,15 @@ public class AuthService {
             if (!active) {
                 throw invalidToken();
             }
-            return claims.userId();
+            User user = userRepository.findById(claims.userId())
+                    .orElseThrow(this::invalidToken);
+            return new AuthenticatedUser(user.getId(), user.getRole());
         } catch (JwtException | IllegalArgumentException e) {
             throw invalidToken();
         }
+    }
+
+    public record AuthenticatedUser(Long userId, UserRole role) {
     }
 
     private String sessionKey(String sessionId) {

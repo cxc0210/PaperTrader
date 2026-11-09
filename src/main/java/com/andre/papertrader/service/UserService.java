@@ -9,6 +9,7 @@ import com.andre.papertrader.dto.UserPageRes;
 import com.andre.papertrader.dto.UserRes;
 import com.andre.papertrader.dto.UpdateUserReq;
 import com.andre.papertrader.entity.User;
+import com.andre.papertrader.entity.UserRole;
 import com.andre.papertrader.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -65,6 +66,7 @@ public class UserService {
         user.setPasswordHash(passwordEncoder.encode(req.password()));
         user.setEmail(req.email());
         user.setPhone(req.phone());
+        user.setRole(req.role() == null ? UserRole.USER : req.role());
         return UserRes.from(userRepository.save(user));
     }
 
@@ -84,6 +86,7 @@ public class UserService {
         user.setUsername(req.username());
         user.setEmail(req.email());
         user.setPhone(req.phone());
+        user.setRole(req.role() == null ? user.getRole() : req.role());
         return UserRes.from(userRepository.save(user));
     }
 
