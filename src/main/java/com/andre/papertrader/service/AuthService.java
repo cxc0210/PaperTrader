@@ -8,6 +8,7 @@ import com.andre.papertrader.entity.User;
 import com.andre.papertrader.entity.UserRole;
 import com.andre.papertrader.repository.UserRepository;
 import io.jsonwebtoken.JwtException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.Instant;
 
 @Service
+@Slf4j
 public class AuthService {
 
     private static final String SESSION_KEY_PREFIX = "auth:session:";
@@ -56,6 +58,7 @@ public class AuthService {
                 String.valueOf(user.getId()),
                 jwtProperties.sessionIdleTimeout()
         );
+        log.info("用户登录成功，userId={}, email={}", user.getId(), user.getEmail());
 
         return new LoginResult(
                 new LoginRes(
@@ -77,6 +80,7 @@ public class AuthService {
                     sessionKey(claims.sessionId()),
                     userSessionKey(claims.userId())
             );
+            log.info("用户退出登录，userId={}", claims.userId());
         } catch (JwtException | IllegalArgumentException e) {
             throw invalidToken();
         }

@@ -11,6 +11,7 @@ import com.andre.papertrader.dto.UpdateUserReq;
 import com.andre.papertrader.entity.User;
 import com.andre.papertrader.entity.UserRole;
 import com.andre.papertrader.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -67,7 +69,9 @@ public class UserService {
         user.setEmail(req.email());
         user.setPhone(req.phone());
         user.setRole(req.role() == null ? UserRole.USER : req.role());
-        return UserRes.from(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        log.info("用户创建成功，userId={}, email={}, role={}", savedUser.getId(), savedUser.getEmail(), savedUser.getRole());
+        return UserRes.from(savedUser);
     }
 
     public UserRes update(Long id, UpdateUserReq req) {
@@ -87,7 +91,9 @@ public class UserService {
         user.setEmail(req.email());
         user.setPhone(req.phone());
         user.setRole(req.role() == null ? user.getRole() : req.role());
-        return UserRes.from(userRepository.save(user));
+        User savedUser = userRepository.save(user);
+        log.info("用户更新成功，userId={}, email={}, role={}", savedUser.getId(), savedUser.getEmail(), savedUser.getRole());
+        return UserRes.from(savedUser);
     }
 
     public void delete(Long id) {
@@ -95,6 +101,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "用户不存在: " + id);
         }
         userRepository.deleteById(id);
+        log.info("用户删除成功，userId={}", id);
     }
 
     public void changePassword(Long id, ChangePasswordReq req) {
@@ -104,6 +111,7 @@ public class UserService {
         }
         user.setPasswordHash(passwordEncoder.encode(req.newPassword()));
         userRepository.save(user);
+        log.info("用户密码修改成功，userId={}", id);
     }
 
     private User findEntity(Long id) {

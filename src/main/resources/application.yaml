@@ -25,3 +25,10 @@ app:
       name: paper_trader_access_token
       same-site: Lax
       secure: false
+
+logging:
+  level:
+    root: INFO
+    com.andre.papertrader: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
